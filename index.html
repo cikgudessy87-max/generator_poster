@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Poster Generator | Fixed Composition & Style Engine</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #fafafa;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom sleek scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121215;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .style-card-active {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.12);
+            box-shadow: 0 0 0 1px #6366f1;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">AI Smart Poster Generator</h1>
+                        <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                            FIXED COMPOSITION ENGINE
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-zinc-400 hidden sm:block">Professional Visual Design System • Identity & Logo Preservation • Exact Typography</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button type="button" onclick="loadSampleData()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Fill Sample</span>
+                </button>
+                <button type="button" onclick="togglePromptModal()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition flex items-center gap-1.5">
+                    <i data-lucide="terminal" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span class="hidden md:inline">Inspect Engine Prompt</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Toast Banner -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Main Workspace Grid -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT COLUMN: CONTROL & INPUT ENGINE (7 cols on large screens) -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+
+            <!-- Locked Composition Blueprint Banner -->
+            <div class="rounded-2xl bg-gradient-to-r from-zinc-900 via-zinc-900 to-indigo-950/30 border border-zinc-800 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 mt-0.5">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-300">Priority 1: Locked Left–Right Composition</h2>
+                        <p class="text-xs text-zinc-400 mt-0.5 leading-relaxed">
+                            <strong class="text-zinc-200">LEFT SIDE:</strong> Official Logo + Exact Headline + Subheadline + Info. &nbsp;|&nbsp; 
+                            <strong class="text-zinc-200">RIGHT SIDE:</strong> Preserved Subject Portrait (Hands out of frame by default).
+                        </p>
+                    </div>
+                </div>
+                <!-- Mini Visual Diagram -->
+                <div class="shrink-0 flex items-center gap-1 bg-zinc-950 p-1.5 rounded-lg border border-zinc-800 self-end sm:self-center">
+                    <div class="w-12 h-14 rounded bg-zinc-800/80 border border-zinc-700 p-1 flex flex-col justify-between">
+                        <div class="w-3 h-2 rounded-xs bg-indigo-400"></div>
+                        <div class="space-y-1">
+                            <div class="w-full h-1.5 bg-zinc-300 rounded-xs"></div>
+                            <div class="w-4/5 h-1 bg-zinc-500 rounded-xs"></div>
+                            <div class="w-3/5 h-1 bg-zinc-600 rounded-xs"></div>
+                        </div>
+                    </div>
+                    <div class="w-12 h-14 rounded bg-indigo-950/50 border border-indigo-500/40 flex flex-col items-center justify-end overflow-hidden relative">
+                        <div class="w-4 h-4 rounded-full bg-indigo-300/90 mb-0.5"></div>
+                        <div class="w-8 h-6 rounded-t-lg bg-indigo-400/80"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 1: REFERENCE ASSETS (PORTRAIT & OFFICIAL LOGO) -->
+            <section class="glass-panel rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-500/30">1</span>
+                        <h3 class="text-sm font-bold text-white">Protected Reference Assets</h3>
+                    </div>
+                    <span class="text-[11px] text-zinc-400">Identity & Brand Integrity Enforced</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Upload Person / Portrait (RIGHT SIDE) -->
+                    <div class="rounded-xl border border-dashed border-zinc-700 hover:border-indigo-500/60 bg-zinc-900/50 p-4 transition relative group">
+                        <input type="file" id="portraitInput" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'portrait')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                Subject Portrait (Right Side)
+                            </span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Identity Lock</span>
+                        </div>
+
+                        <div id="portraitDropzone" onclick="document.getElementById('portraitInput').click()" class="cursor-pointer h-36 rounded-lg bg-zinc-950/80 border border-zinc-800 flex flex-col items-center justify-center p-3 text-center hover:bg-zinc-900 transition overflow-hidden relative">
+                            <div id="portraitPlaceholder" class="flex flex-col items-center">
+                                <i data-lucide="upload-cloud" class="w-7 h-7 text-zinc-500 mb-1.5 group-hover:text-indigo-400 transition"></i>
+                                <p class="text-xs font-medium text-zinc-300">Upload Person Photo</p>
+                                <p class="text-[10px] text-zinc-500 mt-0.5">Chest-up or waist-up recommended</p>
+                            </div>
+                            <img id="portraitPreview" class="hidden w-full h-full object-contain rounded" alt="Uploaded Portrait">
+                            <button id="clearPortraitBtn" type="button" onclick="clearAsset(event, 'portrait')" class="hidden absolute top-2 right-2 p-1.5 rounded-lg bg-zinc-900/90 hover:bg-red-500/90 text-zinc-300 hover:text-white border border-zinc-700 transition">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+
+                        <!-- Portrait Pose Control -->
+                        <div class="mt-3 pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" id="allowHandsToggle" class="w-3.5 h-3.5 rounded bg-zinc-800 border-zinc-600 text-indigo-500 focus:ring-indigo-500">
+                                <span class="text-[11px] text-zinc-300">Explicitly allow visible hands / gesture</span>
+                            </label>
+                        </div>
+                        <div id="customPoseContainer" class="hidden mt-2">
+                            <input type="text" id="customPoseInput" placeholder="e.g., Holding a trophy, waving warmly..." class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- Upload Official Logo (LEFT SIDE) -->
+                    <div class="rounded-xl border border-dashed border-zinc-700 hover:border-indigo-500/60 bg-zinc-900/50 p-4 transition relative group">
+                        <input type="file" id="logoInput" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'logo')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-400"></i>
+                                Official Logo (Upper-Left)
+                            </span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">No Redesign</span>
+                        </div>
+
+                        <div id="logoDropzone" onclick="document.getElementById('logoInput').click()" class="cursor-pointer h-36 rounded-lg bg-zinc-950/80 border border-zinc-800 flex flex-col items-center justify-center p-3 text-center hover:bg-zinc-900 transition overflow-hidden relative">
+                            <div id="logoPlaceholder" class="flex flex-col items-center">
+                                <i data-lucide="badge-check" class="w-7 h-7 text-zinc-500 mb-1.5 group-hover:text-amber-400 transition"></i>
+                                <p class="text-xs font-medium text-zinc-300">Upload Official Logo</p>
+                                <p class="text-[10px] text-zinc-500 mt-0.5">PNG with transparent background ideal</p>
+                            </div>
+                            <img id="logoPreview" class="hidden w-full h-full object-contain rounded" alt="Uploaded Official Logo">
+                            <button id="clearLogoBtn" type="button" onclick="clearAsset(event, 'logo')" class="hidden absolute top-2 right-2 p-1.5 rounded-lg bg-zinc-900/90 hover:bg-red-500/90 text-zinc-300 hover:text-white border border-zinc-700 transition">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <p class="mt-3 pt-2.5 border-t border-zinc-800/80 text-[10px] text-zinc-400 leading-tight">
+                            Preserves original shape, colors, proportions, and internal typography verbatim.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 2: CONTENT & EXACT TEXT SYSTEM (LEFT SIDE) -->
+            <section class="glass-panel rounded-2xl p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-500/30">2</span>
+                        <h3 class="text-sm font-bold text-white">Left-Side Content & Exact Text Engine</h3>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                        <i data-lucide="type" class="w-3 h-3"></i>
+                        Zero Auto-Punctuation / Verbatim Lock
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Theme / Topic -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+                            Input A: Visual Theme / Topic <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="themeInput" placeholder="e.g., National Teachers Day Appreciation, Academic Excellence, Inspiring Mentorship" class="w-full px-3.5 py-2.5 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition">
+                        <p class="text-[10px] text-zinc-500 mt-1">Drives visual storytelling, symbolism, lighting, and background narrative (not rendered as raw label text).</p>
+                    </div>
+
+                    <!-- Main Headline -->
+                    <div class="sm:col-span-2">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-xs font-semibold text-zinc-300">
+                                Input B: Main Headline (Exact Text) <span class="text-rose-400">*</span>
+                            </label>
+                            <span class="text-[10px] text-zinc-500">Rendered verbatim—no commas/periods added</span>
+                        </div>
+                        <input type="text" id="headlineInput" placeholder="e.g., Terima Kasih Guru" class="w-full px-3.5 py-2.5 text-sm font-semibold rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Subheadline -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+                            Input C: Subheadline (Optional • Exact Text)
+                        </label>
+                        <input type="text" id="subheadlineInput" placeholder="e.g., Menerangi Masa Depan Generasi Bangsa" class="w-full px-3.5 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Supporting Message -->
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+                            Input D: Supporting Message / Greeting / Event Info (Optional • Exact Text)
+                        </label>
+                        <textarea id="messageInput" rows="2" placeholder="e.g., Dedikasi dan ketulusanmu menjadi inspirasi bagi setiap langkah kami menuju masa depan gemilang" class="w-full px-3.5 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition resize-none"></textarea>
+                    </div>
+
+                    <!-- Name / Sender / Institution -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+                            Input E: Name / Title / Institution (Lower-Left)
+                        </label>
+                        <input type="text" id="senderInput" placeholder="e.g., Dr. Budi Santoso, M.Pd. | SMA Negeri 1 Jakarta" class="w-full px-3.5 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Date / Location -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">
+                            Date / Location Info (Optional • Exact Text)
+                        </label>
+                        <input type="text" id="dateLocationInput" placeholder="e.g., 25 November 2026 • Auditorium Utama" class="w-full px-3.5 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Purpose & Audience -->
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Poster Purpose Engine</label>
+                        <select id="purposeSelect" class="w-full px-3 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-indigo-500">
+                            <option value="CELEBRATION">Celebration (Festive, Warm, Positive)</option>
+                            <option value="FORMAL EVENT">Formal Event (Dignified, Elegant, Balanced)</option>
+                            <option value="EDUCATIONAL">Educational (Informative, Clear Hierarchy)</option>
+                            <option value="INSPIRATIONAL">Inspirational (Uplifting, Encouraging)</option>
+                            <option value="PROMOTION">Promotion (Attractive, Persuasive)</option>
+                            <option value="AWARENESS">Awareness (Impactful Symbolism, Contrast)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Target Audience Engine</label>
+                        <select id="audienceSelect" class="w-full px-3 py-2 text-sm rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-indigo-500">
+                            <option value="GENERAL AUDIENCE">General Audience (Clear, Accessible, Engaging)</option>
+                            <option value="EDUCATORS">Educators (Professional, Dignified, Warm)</option>
+                            <option value="PROFESSIONALS">Professionals (Refined, Sophisticated, Polished)</option>
+                            <option value="STUDENTS">Students (Educational, Relatable, Modern)</option>
+                            <option value="TEENAGERS">Teenagers (Contemporary, Energetic, Dynamic)</option>
+                            <option value="CHILDREN">Children (Colorful, Friendly, Playful)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 3: DESIGN STYLE SELECTOR (10 STYLES + CUSTOM) -->
+            <section class="glass-panel rounded-2xl p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-500/30">3</span>
+                        <h3 class="text-sm font-bold text-white">Art Direction & Style Engine</h3>
+                    </div>
+                    <span class="text-[11px] text-indigo-300">Style transforms materials & lighting — Layout stays locked</span>
+                </div>
+
+                <!-- 10 Preset Style Grid -->
+                <div id="styleGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Custom Style & Color Preference -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-zinc-800/80">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1">
+                            Custom Style Override (Optional • Priority over presets)
+                        </label>
+                        <input type="text" id="customStyleInput" placeholder="e.g., Bauhaus Swiss Brutalism with brushed aluminum..." class="w-full px-3 py-2 text-xs rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-300 mb-1">
+                            Color Palette Preference (Optional)
+                        </label>
+                        <input type="text" id="colorPrefInput" placeholder="e.g., Deep Navy Blue, Warm Ivory, Subtle Gold" class="w-full px-3 py-2 text-xs rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 4: FORMAT ENGINE & GENERATE ACTION -->
+            <section class="glass-panel rounded-2xl p-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">Format Aspect Ratio</label>
+                        <select id="aspectRatioSelect" class="px-3.5 py-2.5 text-sm font-medium rounded-xl bg-zinc-950 border border-zinc-800 text-white focus:outline-none focus:border-indigo-500">
+                            <option value="4:5" selected>4:5 Portrait (Default Social Poster)</option>
+                            <option value="3:4">3:4 Portrait (Classic Print / A3 Ratio)</option>
+                            <option value="1:1">1:1 Square (Instagram / Feed)</option>
+                            <option value="9:16">9:16 Story / Vertical Banner</option>
+                            <option value="16:9">16:9 Landscape / Presentation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="generateBtn" type="button" onclick="generatePoster()" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 transition flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="wand-2" class="w-4 h-4"></i>
+                    <span>Generate Smart Poster</span>
+                </button>
+            </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN: LIVE ARTWORK STAGE & QUALITY CONTROL (5 cols on large screens) -->
+        <div class="lg:col-span-5 flex flex-col gap-5">
+            <div class="glass-panel rounded-2xl p-5 flex-1 flex flex-col justify-between sticky top-20">
+                
+                <!-- Stage Header -->
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <h2 class="text-sm font-bold text-white">Poster Artwork Canvas</h2>
+                    </div>
+                    <div id="activeBadgeContainer" class="flex items-center gap-1.5">
+                        <span id="badgeStyle" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">STYLE 01</span>
+                        <span id="badgeRatio" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">4:5</span>
+                    </div>
+                </div>
+
+                <!-- Artwork Viewport -->
+                <div class="my-4 flex-1 flex items-center justify-center min-h-[420px] sm:min-h-[500px] rounded-xl bg-zinc-950/90 border border-zinc-800/90 p-4 relative overflow-hidden">
+                    
+                    <!-- Idle State: Structural Wireframe Preview -->
+                    <div id="idlePreviewState" class="w-full max-w-sm flex flex-col items-center text-center space-y-4">
+                        <div class="w-full aspect-[4/5] rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 grid grid-cols-12 gap-2 shadow-inner relative overflow-hidden">
+                            <!-- Left Zone Blueprint -->
+                            <div class="col-span-6 flex flex-col justify-between text-left border-r border-dashed border-zinc-800 pr-2 py-1">
+                                <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+                                    <span class="text-[9px] font-bold text-amber-400">LOGO</span>
+                                </div>
+                                <div class="space-y-2 my-auto">
+                                    <div class="text-[11px] font-extrabold text-zinc-200 leading-tight uppercase tracking-tight" id="wireframeHeadline">YOUR EXACT HEADLINE</div>
+                                    <div class="text-[9px] text-zinc-400 leading-snug" id="wireframeSub">Subheadline & exact supporting information placed cleanly on the left.</div>
+                                </div>
+                                <div class="pt-2 border-t border-zinc-800/80">
+                                    <div class="text-[8px] font-medium text-zinc-500" id="wireframeSender">Sender / Institution</div>
+                                </div>
+                            </div>
+                            <!-- Right Zone Blueprint -->
+                            <div class="col-span-6 flex flex-col items-center justify-end relative">
+                                <span class="absolute top-1 right-1 text-[8px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">RIGHT PORTRAIT</span>
+                                <div class="w-16 h-16 rounded-full bg-zinc-800 border border-zinc-700 mb-1 flex items-center justify-center">
+                                    <i data-lucide="user" class="w-7 h-7 text-zinc-500"></i>
+                                </div>
+                                <div class="w-28 h-28 rounded-t-3xl bg-zinc-800/80 border-t border-x border-zinc-700 flex items-center justify-center">
+                                    <span class="text-[8px] text-zinc-500 uppercase tracking-wider">Chest-Up Frame</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 max-w-xs">
+                            Upload your portrait & logo, enter your exact text, choose a visual style, and click <strong class="text-zinc-200">Generate Smart Poster</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingState" class="hidden flex-col items-center justify-center text-center p-6 space-y-4 z-10">
+                        <div class="relative w-16 h-16">
+                            <div class="absolute inset-0 rounded-full border-4 border-indigo-500/20"></div>
+                            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-6 h-6 text-indigo-400 animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-sm font-bold text-white" id="loadingTitle">Art Directing Poster Composition...</h4>
+                            <p class="text-xs text-zinc-400 max-w-xs" id="loadingSubtitle">Enforcing Left-Right locked layout, preserving portrait identity, and rendering exact typography.</p>
+                        </div>
+                    </div>
+
+                    <!-- Generated Result Image -->
+                    <div id="resultImageContainer" class="hidden w-full h-full flex items-center justify-center">
+                        <img id="generatedPosterImg" class="max-h-[560px] w-auto max-w-full rounded-lg shadow-2xl border border-zinc-700/80 object-contain" alt="Generated AI Smart Poster">
+                    </div>
+
+                </div>
+
+                <!-- Post-Generation Refinement & Export Bar -->
+                <div id="postActionsBar" class="hidden space-y-3 pt-3 border-t border-zinc-800/80">
+                    <!-- Quick Multi-Turn Refinement -->
+                    <div class="flex gap-2">
+                        <input type="text" id="refineInput" placeholder="Refine artwork (e.g., Make background lighting warmer, increase headline contrast)..." class="flex-1 px-3 py-2 text-xs rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
+                        <button type="button" id="refineBtn" onclick="refinePoster()" class="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white border border-zinc-700 transition flex items-center gap-1.5 shrink-0">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>Refine</span>
+                        </button>
+                    </div>
+
+                    <!-- Download & QC Checklist -->
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-emerald-400">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">✓ Left-Right Locked</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">✓ Identity & Logo</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">✓ Exact Text</span>
+                        </div>
+                        <button type="button" onclick="downloadPoster()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 transition flex items-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Download PNG</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Prompt Inspector Modal -->
+    <div id="promptModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl">
+            <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="cpu" class="w-4 h-4 text-indigo-400"></i>
+                    <h3 class="text-sm font-bold text-white">Compiled Master Art-Direction Prompt</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyCompiledPrompt()" class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-200 border border-zinc-700 flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3 h-3"></i>
+                        <span>Copy</span>
+                    </button>
+                    <button type="button" onclick="togglePromptModal()" class="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <pre id="compiledPromptText" class="text-xs text-zinc-300 font-mono whitespace-pre-wrap leading-relaxed bg-zinc-950 p-4 rounded-xl border border-zinc-800"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. MASTER DESIGN STYLES DEFINITION (10 STYLES)
+        // ==========================================
+        const DESIGN_STYLES = [
+            {
+                id: 'STYLE 01',
+                name: 'Modern Editorial',
+                shortDesc: 'Clean grid, spacious negative space, magazine typography',
+                icon: 'layout-template',
+                spec: 'STYLE 01 | MODERN EDITORIAL: Clean grid, contemporary graphic design, strong editorial typography, spacious negative space, elegant alignment, sophisticated layout, refined color palette, magazine-quality art direction, minimal decorative elements, professional print finish.'
+            },
+            {
+                id: 'STYLE 02',
+                name: 'Deep Embossed Engraving',
+                shortDesc: 'Carved relief, raised tactile surfaces, metallic highlights',
+                icon: 'stamp',
+                spec: 'STYLE 02 | DEEP EMBOSSED ENGRAVING: Visibly carved relief, raised tactile surfaces, deep material texture, engraved architectural/ornamental details, sculpted 3D-pressed typography, directional shadows, fine craftsmanship. Must look physically carved/embossed, never flat.'
+            },
+            {
+                id: 'STYLE 03',
+                name: 'Cinematic 3D Art',
+                shortDesc: 'Volumetric light, atmospheric depth, film-poster realism',
+                icon: 'clapperboard',
+                spec: 'STYLE 03 | CINEMATIC 3D ART: Premium 3D rendering, dramatic controlled volumetric lighting, atmospheric depth, realistic cast shadows, dynamic perspective, rich detailed materials, subtle depth of field, cinematic color grading, film-poster visual storytelling.'
+            },
+            {
+                id: 'STYLE 04',
+                name: 'Premium Digital Art',
+                shortDesc: 'Smooth gradients, polished textures, commissioned art',
+                icon: 'palette',
+                spec: 'STYLE 04 | PREMIUM DIGITAL ART: Sophisticated commissioned digital illustration, smooth luminous gradients, refined color transitions, detailed theme-relevant graphical elements, controlled rim lighting, polished textures, elegant art direction.'
+            },
+            {
+                id: 'STYLE 05',
+                name: 'Futuristic Holographic',
+                shortDesc: 'Holographic HUD, glowing lines, sleek sci-fi depth',
+                icon: 'cpu',
+                spec: 'STYLE 05 | FUTURISTIC HOLOGRAPHIC: Sleek futuristic holographic interface elements, architectural depth, digital light beams, glowing geometric lines, subtle neon accents, floating data particles, advanced glass/metallic materials. Keep left text crisp and uncluttered.'
+            },
+            {
+                id: 'STYLE 06',
+                name: 'Minimalist Luxury',
+                shortDesc: 'Restrained palette, refined rhythm, subtle metallic accents',
+                icon: 'gem',
+                spec: 'STYLE 06 | MINIMALIST LUXURY: Ultra-refined luxury minimalism, generous negative space, restrained high-taste color palette, sharp typographic alignment, subtle brushed metallic hairline accents, serene visual rhythm, intentional simplicity.'
+            },
+            {
+                id: 'STYLE 07',
+                name: 'Watercolor Art',
+                shortDesc: 'Genuine pigment washes, visible brushwork, textured paper',
+                icon: 'brush',
+                spec: 'STYLE 07 | WATERCOLOR ART: Genuine hand-painted watercolor pigment washes, soft organic paint blending, visible brushwork, delicate color bleeding on cold-press cotton watercolor paper texture, emotional artistic atmosphere while keeping portrait identity sharp and recognizable.'
+            },
+            {
+                id: 'STYLE 08',
+                name: 'Paper Craft & 3D Layer',
+                shortDesc: 'Dimensional stacked paper, visible thickness, cast shadows',
+                icon: 'layers',
+                spec: 'STYLE 08 | PAPER CRAFT & 3D LAYER: Constructed from thick dimensional paper layers, visible paper edge thickness, hand-cut stacked geometric/organic shapes, soft realistic cast shadows between layers, tactile matte paper grain craftsmanship.'
+            },
+            {
+                id: 'STYLE 09',
+                name: 'Layered Paper Cut Art',
+                shortDesc: 'Intricate silhouettes, multi-layer cutouts, sculpted depth',
+                icon: 'scissors',
+                spec: 'STYLE 09 | LAYERED PAPER CUT ART: Intricate precision-cut paper silhouettes, deep multi-tiered shadowbox layers, sculpted paper depth, delicate cutout ornamental motifs framing the theme without obstructing left-side text or logo.'
+            },
+            {
+                id: 'STYLE 10',
+                name: 'Luxury Black & Gold',
+                shortDesc: 'Deep obsidian textures, strategic gold foil, prestigious contrast',
+                icon: 'crown',
+                spec: 'STYLE 10 | LUXURY BLACK & GOLD: Deep matte obsidian/velvet black architectural background, strategic metallic gold foil typography and fine ornamental accents, dramatic studio rim lighting, prestigious contrast, natural skin tones on portrait.'
+            }
+        ];
+
+        // ==========================================
+        // 2. APPLICATION STATE
+        // ==========================================
+        const state = {
+            selectedStyleId: 'STYLE 01',
+            portraitBase64: null,
+            portraitMime: null,
+            logoBase64: null,
+            logoMime: null,
+            conversationHistory: [], // Stores multi-turn image generation context
+            lastGeneratedImageUrl: null
+        };
+
+        // ==========================================
+        // 3. INITIALIZATION & UI RENDERING
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStyleCards();
+            setupLiveWireframeSync();
+            lucide.createIcons();
+
+            // Toggle custom pose input visibility
+            document.getElementById('allowHandsToggle').addEventListener('change', (e) => {
+                const container = document.getElementById('customPoseContainer');
+                if (e.target.checked) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            });
+
+            // Update aspect ratio badge
+            document.getElementById('aspectRatioSelect').addEventListener('change', (e) => {
+                document.getElementById('badgeRatio').textContent = e.target.value;
+            });
+        });
+
+        function renderStyleCards() {
+            const grid = document.getElementById('styleGrid');
+            grid.innerHTML = DESIGN_STYLES.map(style => {
+                const isSelected = style.id === state.selectedStyleId;
+                return `
+                    <button type="button" onclick="selectStyle('${style.id}')"
+                        class="text-left p-2.5 rounded-xl border transition flex flex-col justify-between gap-1.5 cursor-pointer ${isSelected ? 'style-card-active' : 'border-zinc-800 bg-zinc-950/70 hover:border-zinc-700 hover:bg-zinc-900'}">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="text-[10px] font-bold tracking-wider ${isSelected ? 'text-indigo-400' : 'text-zinc-500'}">${style.id}</span>
+                            <i data-lucide="${style.icon}" class="w-3.5 h-3.5 ${isSelected ? 'text-indigo-400' : 'text-zinc-400'}"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-zinc-100 leading-tight">${style.name}</div>
+                            <div class="text-[10px] text-zinc-400 line-clamp-2 mt-0.5 leading-snug">${style.shortDesc}</div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function selectStyle(styleId) {
+            state.selectedStyleId = styleId;
+            document.getElementById('badgeStyle').textContent = styleId;
+            renderStyleCards();
+        }
+
+        function setupLiveWireframeSync() {
+            const headlineInput = document.getElementById('headlineInput');
+            const subInput = document.getElementById('subheadlineInput');
+            const senderInput = document.getElementById('senderInput');
+
+            headlineInput.addEventListener('input', () => {
+                document.getElementById('wireframeHeadline').textContent = headlineInput.value || 'YOUR EXACT HEADLINE';
+            });
+            subInput.addEventListener('input', () => {
+                document.getElementById('wireframeSub').textContent = subInput.value || 'Subheadline & exact supporting information placed cleanly on the left.';
+            });
+            senderInput.addEventListener('input', () => {
+                document.getElementById('wireframeSender').textContent = senderInput.value || 'Sender / Institution';
+            });
+        }
+
+        // ==========================================
+        // 4. ASSET UPLOAD HANDLERS (PORTRAIT & LOGO)
+        // ==========================================
+        function handleImageUpload(event, assetType) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('Please upload a valid image file (PNG, JPG, WebP).', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                const base64Data = dataUrl.split(',')[1];
+                const mimeType = file.type;
+
+                if (assetType === 'portrait') {
+                    state.portraitBase64 = base64Data;
+                    state.portraitMime = mimeType;
+                    document.getElementById('portraitPreview').src = dataUrl;
+                    document.getElementById('portraitPreview').classList.remove('hidden');
+                    document.getElementById('portraitPlaceholder').classList.add('hidden');
+                    document.getElementById('clearPortraitBtn').classList.remove('hidden');
+                    showToast('Subject portrait loaded with Identity Preservation Lock.', 'success');
+                } else if (assetType === 'logo') {
+                    state.logoBase64 = base64Data;
+                    state.logoMime = mimeType;
+                    document.getElementById('logoPreview').src = dataUrl;
+                    document.getElementById('logoPreview').classList.remove('hidden');
+                    document.getElementById('logoPlaceholder').classList.add('hidden');
+                    document.getElementById('clearLogoBtn').classList.remove('hidden');
+                    showToast('Official logo loaded with Exact Asset Protection.', 'success');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearAsset(event, assetType) {
+            event.stopPropagation();
+            if (assetType === 'portrait') {
+                state.portraitBase64 = null;
+                state.portraitMime = null;
+                document.getElementById('portraitInput').value = '';
+                document.getElementById('portraitPreview').classList.add('hidden');
+                document.getElementById('portraitPlaceholder').classList.remove('hidden');
+                document.getElementById('clearPortraitBtn').classList.add('hidden');
+            } else if (assetType === 'logo') {
+                state.logoBase64 = null;
+                state.logoMime = null;
+                document.getElementById('logoInput').value = '';
+                document.getElementById('logoPreview').classList.add('hidden');
+                document.getElementById('logoPlaceholder').classList.remove('hidden');
+                document.getElementById('clearLogoBtn').classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // 5. MASTER PROMPT COMPILER ENGINE
+        // ==========================================
+        function buildMasterArtDirectionPrompt() {
+            const theme = document.getElementById('themeInput').value.trim() || 'Professional Leadership & Excellence';
+            const headline = document.getElementById('headlineInput').value; // Preserve exact spacing/capitalization
+            const subheadline = document.getElementById('subheadlineInput').value;
+            const message = document.getElementById('messageInput').value;
+            const sender = document.getElementById('senderInput').value;
+            const dateLocation = document.getElementById('dateLocationInput').value;
+            const purpose = document.getElementById('purposeSelect').value;
+            const audience = document.getElementById('audienceSelect').value;
+            const customStyle = document.getElementById('customStyleInput').value.trim();
+            const colorPref = document.getElementById('colorPrefInput').value.trim();
+            const allowHands = document.getElementById('allowHandsToggle').checked;
+            const customPose = document.getElementById('customPoseInput').value.trim();
+
+            const selectedStyleObj = DESIGN_STYLES.find(s => s.id === state.selectedStyleId) || DESIGN_STYLES[0];
+            const activeStyleInstruction = customStyle
+                ? `CUSTOM STYLE OVERRIDE (PRIORITY): ${customStyle}. Translate this custom style into materials, texture, lighting, depth, typography treatment, and background while keeping the Left-Right composition strictly locked.`
+                : selectedStyleObj.spec;
+
+            const hasPortrait = Boolean(state.portraitBase64);
+            const hasLogo = Boolean(state.logoBase64);
+
+            // Build exact text manifest
+            let textManifest = `1. MAIN HEADLINE (Most prominent text on LEFT SIDE, render exact characters without adding commas, periods, or extra punctuation): "${headline}"`;
+            if (subheadline.trim()) {
+                textManifest += `\n2. SUBHEADLINE (Supporting hierarchy below/near headline on LEFT SIDE, exact characters): "${subheadline}"`;
+            }
+            if (message.trim()) {
+                textManifest += `\n3. SUPPORTING MESSAGE / INFO (Cleanly organized readable lines on LEFT SIDE, exact characters): "${message}"`;
+            }
+            if (dateLocation.trim()) {
+                textManifest += `\n4. DATE / LOCATION (Structured info on LEFT SIDE, exact characters): "${dateLocation}"`;
+            }
+            if (sender.trim()) {
+                textManifest += `\n5. SENDER / INSTITUTION IDENTITY (Lower-left area, smaller than headline, exact characters): "${sender}"`;
+            }
+
+            // Pose rule
+            const poseInstruction = allowHands
+                ? `USER EXPLICIT POSE OVERRIDE: ${customPose || 'Natural expressive gesture requested by user'}. Maintain natural anatomy and keep the person strictly on the RIGHT SIDE.`
+                : `DEFAULT PORTRAIT POSE RULE (STRICT): Generate a natural chest-up or upper-body portrait with relaxed shoulders and a confident, friendly expression. BOTH HANDS MUST REMAIN OUTSIDE THE VISIBLE FRAME. Never generate crossed arms, folded arms, clasped hands, or hand gestures.`;
+
+            return `MASTER ART DIRECTION PROMPT — AI SMART POSTER GENERATOR
+Create an award-winning, professionally art-directed poster with a cohesive visual concept, strong visual storytelling, and crisp studio finish.
+
+[PRIORITY 1: LOCKED LEFT–RIGHT COMPOSITION — NON-NEGOTIABLE]
+- The layout is strictly divided into LEFT SIDE and RIGHT SIDE. Never center the portrait, never reverse sides, and never let the style break this grid.
+- LEFT SIDE (Reserved exclusively for Brand & Typography):
+  * Upper-left: ${hasLogo ? 'Place the exact uploaded OFFICIAL LOGO from the reference image with clean breathing room.' : 'Clean upper-left typographic anchor margin (do NOT invent fake logos).'}
+  * Left & Lower-left: Arrange the Main Headline, Subheadline, Supporting Message, and Sender/Event info with crystal-clear typographic hierarchy, strong contrast, and intentional negative space.
+- RIGHT SIDE (Reserved exclusively for Subject Portrait):
+  * Place the main subject portrait prominently on the RIGHT SIDE, framed chest-up or waist-up, facing slightly toward the viewer/left text zone.
+  * Keep the face 100% unobstructed, well-lit, and naturally integrated into the poster environment, lighting, shadows, and color grading.
+
+[PRIORITY 2: IDENTITY & LOGO PRESERVATION]
+- ${hasPortrait ? 'PORTRAIT REFERENCE ATTACHED: Strictly preserve the exact facial identity, facial structure, eyes, nose, mouth, skin tone, hairline, hairstyle, and natural age of the person in the uploaded portrait photograph. Do not replace with a generic face.' : 'Create a realistic, dignified professional subject portrait positioned on the RIGHT SIDE.'}
+- ${hasLogo ? 'OFFICIAL LOGO REFERENCE ATTACHED: Use the exact uploaded official logo without redrawing, altering colors, distorting proportions, or changing internal text/symbols.' : 'Do not generate any fake emblems or watermarks.'}
+- ${poseInstruction}
+
+[PRIORITY 3: EXACT TEXT VERBATIM LOCK — ZERO AUTO-PUNCTUATION]
+Render ONLY the exact user-supplied text listed below on the LEFT SIDE. Preserve spelling, capitalization, and punctuation verbatim. DO NOT insert commas, periods, quotation marks, or exclamation marks that were not supplied by the user:
+${textManifest}
+
+[PRIORITY 4: VISUAL CONCEPT, PURPOSE & AUDIENCE]
+- THEME / VISUAL STORYTELLING: "${theme}" — Translate this theme into meaningful background architecture, symbolic motifs, atmosphere, and depth (never write the raw theme label unless it is part of the headline).
+- POSTER PURPOSE: ${purpose}
+- TARGET AUDIENCE: ${audience}
+${colorPref ? `- COLOR PALETTE DIRECTION: ${colorPref}` : '- COLOR PALETTE DIRECTION: Harmonious, high-contrast palette tailored to the theme and selected style.'}
+
+[PRIORITY 5: SELECTED ART DIRECTION STYLE]
+${activeStyleInstruction}
+Ensure the style visibly defines the materials, textures, lighting, typography finish, and background depth while keeping all left-side text effortlessly legible.`;
+        }
+
+        // ==========================================
+        // 6. GEMINI API CALLS (GENERATE & REFINE)
+        // ==========================================
+        async function fetchWithExponentialBackoff(url, options, maxRetries = 4) {
+            let delay = 1000;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                    if (response.status === 429 || response.status >= 500) {
+                        if (attempt === maxRetries) {
+                            const errBody = await response.text();
+                            throw new Error(`API Error (${response.status}): ${errBody}`);
+                        }
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else {
+                        const errBody = await response.text();
+                        throw new Error(`Request failed (${response.status}): ${errBody}`);
+                    }
+                } catch (err) {
+                    if (attempt === maxRetries) throw err;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        async function generatePoster() {
+            const headline = document.getElementById('headlineInput').value.trim();
+            if (!headline) {
+                showToast('Please enter a Main Headline (Input B) before generating.', 'error');
+                document.getElementById('headlineInput').focus();
+                return;
+            }
+
+            const masterPrompt = buildMasterArtDirectionPrompt();
+            const aspectRatio = document.getElementById('aspectRatioSelect').value;
+
+            // Assemble multimodal parts: Master Prompt + optional Portrait + optional Official Logo
+            const userParts = [{ text: masterPrompt }];
+
+            if (state.portraitBase64) {
+                userParts.push({
+                    text: "REFERENCE IMAGE 1 — SUBJECT PORTRAIT (Place on RIGHT SIDE, preserve exact facial identity and natural appearance):"
+                });
+                userParts.push({
+                    inlineData: {
+                        mimeType: state.portraitMime,
+                        data: state.portraitBase64
+                    }
+                });
+            }
+
+            if (state.logoBase64) {
+                userParts.push({
+                    text: "REFERENCE IMAGE 2 — OFFICIAL LOGO (Place in UPPER-LEFT area, preserve exact shape, colors, and typography without redrawing):"
+                });
+                userParts.push({
+                    inlineData: {
+                        mimeType: state.logoMime,
+                        data: state.logoBase64
+                    }
+                });
+            }
+
+            const initialTurn = { role: 'user', parts: userParts };
+            state.conversationHistory = [initialTurn];
+
+            setLoadingState(true, 'Art Directing Poster Composition...', 'Locking Left-Right layout, integrating portrait & logo, and rendering exact typography.');
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: state.conversationHistory,
+                    generationConfig: {
+                        responseModalities: ['IMAGE'],
+                        imageConfig: {
+                            aspectRatio: aspectRatio
+                        }
+                    }
+                };
+
+                const result = await fetchWithExponentialBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const candidate = result?.candidates?.[0];
+                const imagePart = candidate?.content?.parts?.find(p => p.inlineData);
+
+                if (!imagePart || !imagePart.inlineData?.data) {
+                    throw new Error('No image was returned by the model. Please refine your prompt and try again.');
+                }
+
+                // Store model response turn (including thought_signature if present) for multi-turn refinement
+                state.conversationHistory.push(candidate.content);
+
+                const imageUrl = `data:${imagePart.inlineData.mimeType || 'image/png'};base64,${imagePart.inlineData.data}`;
+                state.lastGeneratedImageUrl = imageUrl;
+
+                displayGeneratedPoster(imageUrl);
+                showToast('Smart Poster generated successfully!', 'success');
+
+            } catch (error) {
+                console.error('Poster Generation Error:', error);
+                showToast(error.message || 'Failed to generate poster. Please try again.', 'error');
+                setLoadingState(false);
+            }
+        }
+
+        async function refinePoster() {
+            const refinementInstruction = document.getElementById('refineInput').value.trim();
+            if (!refinementInstruction) {
+                showToast('Enter a refinement instruction first.', 'error');
+                return;
+            }
+            if (state.conversationHistory.length === 0) {
+                showToast('Generate a poster first before refining.', 'error');
+                return;
+            }
+
+            const aspectRatio = document.getElementById('aspectRatioSelect').value;
+            const guardedRefinement = `REFINEMENT INSTRUCTION: ${refinementInstruction}
+CRITICAL CONSTRAINTS TO MAINTAIN:
+1. Keep the LEFT-RIGHT locked composition (Logo + Exact Text on LEFT, Person Portrait on RIGHT).
+2. Keep the person's facial identity and official logo completely preserved.
+3. Keep all supplied text spelling and punctuation exact without adding commas or periods.`;
+
+            state.conversationHistory.push({
+                role: 'user',
+                parts: [{ text: guardedRefinement }]
+            });
+
+            setLoadingState(true, 'Refining Poster Artwork...', 'Applying art direction adjustments while preserving layout, identity, and exact text.');
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: state.conversationHistory,
+                    generationConfig: {
+                        responseModalities: ['IMAGE'],
+                        imageConfig: {
+                            aspectRatio: aspectRatio
+                        }
+                    }
+                };
+
+                const result = await fetchWithExponentialBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const candidate = result?.candidates?.[0];
+                const imagePart = candidate?.content?.parts?.find(p => p.inlineData);
+
+                if (!imagePart || !imagePart.inlineData?.data) {
+                    throw new Error('Could not refine image. Try a simpler adjustment.');
+                }
+
+                state.conversationHistory.push(candidate.content);
+                const imageUrl = `data:${imagePart.inlineData.mimeType || 'image/png'};base64,${imagePart.inlineData.data}`;
+                state.lastGeneratedImageUrl = imageUrl;
+
+                document.getElementById('refineInput').value = '';
+                displayGeneratedPoster(imageUrl);
+                showToast('Poster refined successfully!', 'success');
+
+            } catch (error) {
+                console.error('Refinement Error:', error);
+                showToast(error.message || 'Refinement failed.', 'error');
+                setLoadingState(false);
+            }
+        }
+
+        // ==========================================
+        // 7. UI HELPERS, EXPORT & SAMPLE PRESETS
+        // ==========================================
+        function setLoadingState(isLoading, title = '', subtitle = '') {
+            const generateBtn = document.getElementById('generateBtn');
+            const refineBtn = document.getElementById('refineBtn');
+            const loadingEl = document.getElementById('loadingState');
+            const idleEl = document.getElementById('idlePreviewState');
+            const resultEl = document.getElementById('resultImageContainer');
+
+            generateBtn.disabled = isLoading;
+            if (refineBtn) refineBtn.disabled = isLoading;
+
+            if (isLoading) {
+                document.getElementById('loadingTitle').textContent = title;
+                document.getElementById('loadingSubtitle').textContent = subtitle;
+                idleEl.classList.add('hidden');
+                resultEl.classList.add('hidden');
+                loadingEl.classList.remove('hidden');
+                loadingEl.classList.add('flex');
+            } else {
+                loadingEl.classList.add('hidden');
+                loadingEl.classList.remove('flex');
+                if (state.lastGeneratedImageUrl) {
+                    resultEl.classList.remove('hidden');
+                } else {
+                    idleEl.classList.remove('hidden');
+                }
+            }
+        }
+
+        function displayGeneratedPoster(imageUrl) {
+            const imgEl = document.getElementById('generatedPosterImg');
+            imgEl.src = imageUrl;
+            setLoadingState(false);
+            document.getElementById('postActionsBar').classList.remove('hidden');
+        }
+
+        function downloadPoster() {
+            if (!state.lastGeneratedImageUrl) return;
+            const link = document.createElement('a');
+            const slug = (document.getElementById('headlineInput').value || 'smart-poster')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            link.href = state.lastGeneratedImageUrl;
+            link.download = `${slug || 'smart-poster'}-${state.selectedStyleId.toLowerCase().replace(/\s+/g, '')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Poster downloaded as high-resolution PNG.', 'success');
+        }
+
+        function loadSampleData() {
+            document.getElementById('themeInput').value = 'National Teachers Day Appreciation & Inspiring Mentorship';
+            document.getElementById('headlineInput').value = 'Terima Kasih Guru';
+            document.getElementById('subheadlineInput').value = 'Menerangi Masa Depan Generasi Bangsa';
+            document.getElementById('messageInput').value = 'Dedikasi dan ketulusanmu menjadi cahaya ilmu yang membimbing setiap langkah kami menuju masa depan gemilang';
+            document.getElementById('senderInput').value = 'Dr. Hendra Wijaya, M.Pd. | Kepala Sekolah';
+            document.getElementById('dateLocationInput').value = '25 November 2026 • Jakarta';
+            document.getElementById('purposeSelect').value = 'CELEBRATION';
+            document.getElementById('audienceSelect').value = 'EDUCATORS';
+            selectStyle('STYLE 10');
+
+            // Sync wireframe preview
+            document.getElementById('wireframeHeadline').textContent = 'Terima Kasih Guru';
+            document.getElementById('wireframeSub').textContent = 'Menerangi Masa Depan Generasi Bangsa';
+            document.getElementById('wireframeSender').textContent = 'Dr. Hendra Wijaya, M.Pd. | Kepala Sekolah';
+
+            showToast('Sample campaign loaded. Upload a portrait & logo or click Generate!', 'info');
+        }
+
+        function togglePromptModal() {
+            const modal = document.getElementById('promptModal');
+            if (modal.classList.contains('hidden')) {
+                document.getElementById('compiledPromptText').textContent = buildMasterArtDirectionPrompt();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function copyCompiledPrompt() {
+            const text = document.getElementById('compiledPromptText').textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('Compiled Master Prompt copied to clipboard.', 'success');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-zinc-900 border-emerald-500/40 text-emerald-300',
+                error: 'bg-zinc-900 border-rose-500/40 text-rose-300',
+                info: 'bg-zinc-900 border-indigo-500/40 text-indigo-300'
+            };
+            const icons = {
+                success: 'check-circle-2',
+                error: 'alert-circle',
+                info: 'info'
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-xl text-xs font-medium transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <i data-lucide="${icons[type] || 'info'}" class="w-4 h-4 shrink-0"></i>
+                <span class="flex-1">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
